@@ -1,0 +1,8 @@
+package.json
+package-lock.json
+.env
+README.md
+app.json
+.gitignore
+node_modules/
+bin/
