@@ -15,7 +15,7 @@ const RequestPromptFunction = async (query, setAnswer, setLoading) => {
 		})
 			.then((response) => response.json())
 			.then((data) => {
-				if (data?.status === "OK") {
+				if (data?.status === "OK" && data?.message?.output) {
 					setAnswer(data?.message?.output);
 				} else {
 					setAnswer(

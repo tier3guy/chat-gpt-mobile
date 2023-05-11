@@ -17,24 +17,28 @@ import { useAuthentication } from "../../contexts/Authentication";
 // apis
 import { RequestPromptFunction } from "../../api";
 
+// External Imports
+import uuid from "react-native-uuid";
+
 const HomeScreen = ({ navigation, route }) => {
 	const parameters = route?.params;
+	const __id = parameters?.chat?.__id ? parameters?.chat?.__id : uuid.v4();
+	const initialChat = parameters?.chat?.chats ? parameters?.chat?.chats : [];
+
+	const { updateChat } = useAuthentication();
 
 	const { colors } = useTheme();
 	const scrollViewRef = useRef();
 
 	const TEXT_RENDER_TIME = 50;
 	const [query, setQuery] = useState("");
-	const [chats, setChats] = useState([]);
+	const [chats, setChats] = useState(initialChat);
 	const [answer, setAnswer] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [displayText, setDisplayText] = useState("");
 
-	const handleContentSizeChange = () => {
-		scrollViewRef.current.scrollToEnd({ animated: true });
-	};
-
 	const updateDisplayText = (text) => {
+		if (!text) return;
 		let i = 0;
 		const timer = setInterval(() => {
 			if (i < text.length) {
@@ -71,10 +75,6 @@ const HomeScreen = ({ navigation, route }) => {
 		await RequestPromptFunction(query, setAnswer, setLoading);
 	};
 
-	const openDrawer = () => {
-		navigation.openDrawer();
-	};
-
 	useEffect(() => {
 		if (answer !== "") {
 			updateDisplayText(answer);
@@ -86,12 +86,18 @@ const HomeScreen = ({ navigation, route }) => {
 		setChats(parameters?.chat?.chats || []);
 	}, [parameters]);
 
+	useEffect(() => {
+		if (chats && chats.length > 0 && chats.length % 2 === 0) {
+			updateChat({ __id, chats });
+		}
+	}, [chats]);
+
 	return (
 		<View style={[styles.home, { backgroundColor: colors.background }]}>
 			<View
 				style={[styles.header, { borderBottomColor: colors.fontLight }]}
 			>
-				<TouchableOpacity onPress={openDrawer}>
+				<TouchableOpacity onPress={() => navigation.openDrawer()}>
 					<Icons name="Bar" size={24} color={colors.font} />
 				</TouchableOpacity>
 				<View style={styles.center}>
@@ -112,7 +118,9 @@ const HomeScreen = ({ navigation, route }) => {
 					showsVerticalScrollIndicator={false}
 					style={styles.scrollView}
 					ref={scrollViewRef}
-					onContentSizeChange={handleContentSizeChange}
+					onContentSizeChange={() =>
+						scrollViewRef.current.scrollToEnd({ animated: true })
+					}
 				>
 					<View>
 						{chats.map((chat, index) => {

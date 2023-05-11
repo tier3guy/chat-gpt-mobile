@@ -13,7 +13,7 @@ import { SignupFunction } from "../../api";
 
 const UsernameScreen = ({ navigation, route }) => {
 	const { colors } = useTheme();
-	const { setUser, setIsLoggedIn } = useAuthentication();
+	const { signup } = useAuthentication();
 
 	const [username, setUsername] = useState("");
 	const [error, setError] = useState("");
@@ -24,17 +24,17 @@ const UsernameScreen = ({ navigation, route }) => {
 			setError("Please enter a username.");
 			return;
 		}
-		await SignupFunction(
-			{
-				username,
-				email: route.params.email,
-				password: route.params.password,
-			},
-			setUser,
-			setIsLoggedIn,
-			setLoading,
-			setError,
-		);
+		const creadentials = {
+			username,
+			email: route.params.email,
+			password: route.params.password,
+		};
+		setLoading(true);
+		const response = await signup(creadentials);
+		if (response === 505) {
+			setError("Something went wrong. Please try again later.");
+		}
+		setLoading(false);
 	};
 
 	return (

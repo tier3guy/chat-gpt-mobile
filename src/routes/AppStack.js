@@ -1,5 +1,5 @@
 // Screens
-import { HomeScreen, SettingsScreen } from "../screens";
+import { HomeScreen, SettingsScreen, VoiceScreen } from "../screens";
 
 // Components
 import { CustomDrawer } from "../components";
@@ -19,6 +19,7 @@ const AppStack = () => {
 		>
 			<Drawer.Screen name="Home" component={HomeScreen} />
 			<Drawer.Screen name="Settings" component={SettingsScreen} />
+			<Drawer.Screen name="Voice" component={VoiceScreen} />
 		</Drawer.Navigator>
 	);
 };

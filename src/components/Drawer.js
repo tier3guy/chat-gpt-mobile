@@ -1,4 +1,10 @@
-import { View, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import {
+	View,
+	StyleSheet,
+	TouchableOpacity,
+	ScrollView,
+	Linking,
+} from "react-native";
 
 // Components
 import Text from "./Text";
@@ -32,13 +38,14 @@ const Link = ({ text, onPress, icon, style }) => {
 
 const Drawer = () => {
 	const { colors } = useTheme();
-	const { logout, user } = useAuthentication();
+	const { logout, user, clearChatHistory } = useAuthentication();
 	const navigation = useNavigation();
 
 	const links = [
 		{
 			text: "Clear Conversations",
 			icon: "Delete",
+			event: clearChatHistory,
 		},
 		{
 			text: "Settings",
@@ -48,7 +55,21 @@ const Drawer = () => {
 		{
 			text: "Get Help",
 			icon: "Link",
+			event: async () => {
+				const url =
+					"https://help.openai.com/en/collections/3742473-chatgpt";
+
+				const supported = await Linking.canOpenURL(url); //To check if URL is supported or not.
+				if (supported) {
+					await Linking.openURL(url); // It will open the URL on browser.
+				}
+			},
 		},
+		// {
+		// 	text: "Voice Screen",
+		// 	icon: "Link",
+		// 	navigateTo: "Voice",
+		// },
 		{
 			text: "Logout",
 			icon: "Logout",
